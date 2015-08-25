@@ -36,7 +36,7 @@ TEST(Ccommand, AddArgOk)
     CHECK_EQUAL(2, cmd.nargs);
     STRCMP_EQUAL(arg, cmd.args[1]);
 
-    CHECK_TRUE(0 == ccommand_add_arg_int(&cmd, 3));
+    CHECK_TRUE(0 == ccommand_add_arg(&cmd, "%d", 3));
     CHECK_EQUAL(3, cmd.nargs);
     STRCMP_EQUAL("3", cmd.args[2]);
 }
@@ -64,19 +64,15 @@ TEST(Ccommand, FmtAddArgOk)
 
     ccommand_init(&cmd, program_true);
 
-    ccommand_add_arg_int(&cmd, 3);
-    ccommand_add_arg(&cmd, "%d", 3);
-    STRCMP_EQUAL(cmd.args[1], cmd.args[2]);
-
     ccommand_add_arg_cstr(&cmd, arg);
     ccommand_add_arg(&cmd, "%s", arg);
-    STRCMP_EQUAL(cmd.args[3], cmd.args[4]);
+    STRCMP_EQUAL(cmd.args[1], cmd.args[2]);
 
     const int port = 8080;
     const char *hostname = "localhost";
 
     ccommand_add_arg(&cmd, "http://%s:%d", hostname, port);
-    STRCMP_EQUAL("http://localhost:8080", cmd.args[5]);
+    STRCMP_EQUAL("http://localhost:8080", cmd.args[3]);
 
     ccommand_cleanup(&cmd);
 }
