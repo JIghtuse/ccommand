@@ -56,3 +56,27 @@ TEST(Ccommand, CleanUpOk)
     CHECK_EQUAL(1, cmd.nargs);
     STRCMP_EQUAL(program_true, cmd.args[0]);
 }
+
+TEST(Ccommand, FmtAddArgOk)
+{
+    const char *program_true = "/bin/true";
+    const char *arg = "--help";
+
+    ccommand_init(&cmd, program_true);
+
+    ccommand_add_arg_int(&cmd, 3);
+    ccommand_add_arg(&cmd, "%d", 3);
+    STRCMP_EQUAL(cmd.args[1], cmd.args[2]);
+
+    ccommand_add_arg_cstr(&cmd, arg);
+    ccommand_add_arg(&cmd, "%s", arg);
+    STRCMP_EQUAL(cmd.args[3], cmd.args[4]);
+
+    const int port = 8080;
+    const char *hostname = "localhost";
+
+    ccommand_add_arg(&cmd, "http://%s:%d", hostname, port);
+    STRCMP_EQUAL("http://localhost:8080", cmd.args[5]);
+
+    ccommand_cleanup(&cmd);
+}

@@ -13,6 +13,7 @@ struct ccommand {
 };
 
 int ccommand_init(struct ccommand *cmd, const char* program);
+int ccommand_add_arg(struct ccommand *cmd, const char *fmt, ...);
 int ccommand_add_arg_cstr(struct ccommand *cmd, const char *arg);
 int ccommand_add_arg_int(struct ccommand *cmd, int arg);
 int ccommand_exec(struct ccommand *cmd);
