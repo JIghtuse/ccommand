@@ -38,14 +38,6 @@ int ccommand_add_arg(struct ccommand *cmd, const char *fmt, ...)
     return 0;
 }
 
-int ccommand_add_arg_cstr(struct ccommand *cmd, const char *arg)
-{
-    if (!cmd || !arg)
-        return -1;
-    ccommand_add_arg_private(cmd, arg);
-    return 0;
-}
-
 int ccommand_cleanup(struct ccommand *cmd)
 {
     if (!cmd || !cmd->args)

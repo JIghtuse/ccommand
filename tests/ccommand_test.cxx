@@ -30,15 +30,26 @@ TEST(Ccommand, AddArgOk)
 
     ccommand_init(&cmd, program);
 
-    CHECK_FALSE(0 == ccommand_add_arg_cstr(&cmd, nullptr));
+    CHECK_FALSE(0 == ccommand_add_arg(&cmd, nullptr));
 
-    CHECK_TRUE(0 == ccommand_add_arg_cstr(&cmd, arg));
+    CHECK_TRUE(0 == ccommand_add_arg(&cmd, arg));
     CHECK_EQUAL(2, cmd.nargs);
     STRCMP_EQUAL(arg, cmd.args[1]);
 
-    CHECK_TRUE(0 == ccommand_add_arg(&cmd, "%d", 3));
+    CHECK_TRUE(0 == ccommand_add_arg(&cmd, "%s", arg));
     CHECK_EQUAL(3, cmd.nargs);
-    STRCMP_EQUAL("3", cmd.args[2]);
+    STRCMP_EQUAL(arg, cmd.args[2]);
+
+    CHECK_TRUE(0 == ccommand_add_arg(&cmd, "%d", 3));
+    CHECK_EQUAL(4, cmd.nargs);
+    STRCMP_EQUAL("3", cmd.args[3]);
+
+    const int port = 8080;
+    const char *hostname = "localhost";
+
+    ccommand_add_arg(&cmd, "http://%s:%d", hostname, port);
+    STRCMP_EQUAL("http://localhost:8080", cmd.args[4]);
+    CHECK_EQUAL(5, cmd.nargs);
 }
 
 TEST(Ccommand, CleanUpOk)
@@ -55,28 +66,4 @@ TEST(Ccommand, CleanUpOk)
     ccommand_init(&cmd, program_true);
     CHECK_EQUAL(1, cmd.nargs);
     STRCMP_EQUAL(program_true, cmd.args[0]);
-}
-
-TEST(Ccommand, FmtAddArgOk)
-{
-    const char *program_true = "/bin/true";
-    const char *arg = "--help";
-
-    ccommand_init(&cmd, program_true);
-
-    ccommand_add_arg_cstr(&cmd, arg);
-    ccommand_add_arg(&cmd, "%s", arg);
-    STRCMP_EQUAL(cmd.args[1], cmd.args[2]);
-
-    ccommand_add_arg_cstr(&cmd, arg);
-    ccommand_add_arg(&cmd, arg);
-    STRCMP_EQUAL(cmd.args[3], cmd.args[4]);
-
-    const int port = 8080;
-    const char *hostname = "localhost";
-
-    ccommand_add_arg(&cmd, "http://%s:%d", hostname, port);
-    STRCMP_EQUAL("http://localhost:8080", cmd.args[5]);
-
-    ccommand_cleanup(&cmd);
 }
