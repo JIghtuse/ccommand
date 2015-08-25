@@ -68,11 +68,15 @@ TEST(Ccommand, FmtAddArgOk)
     ccommand_add_arg(&cmd, "%s", arg);
     STRCMP_EQUAL(cmd.args[1], cmd.args[2]);
 
+    ccommand_add_arg_cstr(&cmd, arg);
+    ccommand_add_arg(&cmd, arg);
+    STRCMP_EQUAL(cmd.args[3], cmd.args[4]);
+
     const int port = 8080;
     const char *hostname = "localhost";
 
     ccommand_add_arg(&cmd, "http://%s:%d", hostname, port);
-    STRCMP_EQUAL("http://localhost:8080", cmd.args[3]);
+    STRCMP_EQUAL("http://localhost:8080", cmd.args[5]);
 
     ccommand_cleanup(&cmd);
 }
