@@ -67,3 +67,16 @@ TEST(Ccommand, CleanUpOk)
     CHECK_EQUAL(1, cmd.nargs);
     STRCMP_EQUAL(program_true, cmd.args[0]);
 }
+
+TEST(Ccommand, RunOk)
+{
+    const char *program_true = "/bin/true";
+    const char *program_false = "/bin/false";
+
+    ccommand_init(&cmd, program_true);
+    CHECK_EQUAL(0, ccommand_exec(&cmd));
+    ccommand_cleanup(&cmd);
+
+    ccommand_init(&cmd, program_false);
+    CHECK_EQUAL(1, ccommand_exec(&cmd));
+}

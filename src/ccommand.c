@@ -2,6 +2,9 @@
 #include <xalloc.h>
 
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 static void ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
 {
@@ -36,6 +39,28 @@ int ccommand_add_arg(struct ccommand *cmd, const char *fmt, ...)
 
     free(arg_str);
     return 0;
+}
+
+int ccommand_exec(struct ccommand *cmd)
+{
+    size_t new_size = (cmd->nargs + 1) * sizeof(char*);
+    cmd->args = xrealloc((char**)cmd->args, new_size);
+    cmd->args[cmd->nargs++] = NULL;
+
+    int status;
+    pid_t child_pid;
+    switch (child_pid = fork()) {
+    case -1:
+        return -1;
+    case 0:
+        execvp(cmd->args[0], (char * const *)cmd->args);
+        return -1;
+    default:
+        if (waitpid(child_pid, &status, 0) == -1)
+            return -1;
+        else
+            return WEXITSTATUS(status);
+    }
 }
 
 int ccommand_cleanup(struct ccommand *cmd)
