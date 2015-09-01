@@ -43,9 +43,10 @@ int ccommand_add_arg(struct ccommand *cmd, const char *fmt, ...)
 
 int ccommand_exec(struct ccommand *cmd)
 {
-    size_t new_size = (cmd->nargs + 1) * sizeof(char*);
-    cmd->args = xrealloc((char**)cmd->args, new_size);
-    cmd->args[cmd->nargs++] = NULL;
+    if (!cmd || !cmd->args || cmd->nargs == 0)
+        return -1;
+
+    ccommand_add_arg_private(cmd, NULL);
 
     int status;
     pid_t child_pid;
