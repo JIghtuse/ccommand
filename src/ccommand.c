@@ -55,12 +55,17 @@ int ccommand_exec(struct ccommand *cmd)
         return -1;
     case 0:
         execvp(cmd->args[0], (char * const *)cmd->args);
-        return -1;
+        abort();
     default:
-        if (waitpid(child_pid, &status, 0) == -1)
-            return -1;
-        else
-            return WEXITSTATUS(status);
+        do {
+            if (waitpid(child_pid, &status, 0) == -1) {
+                return -1;
+            } else if (WIFEXITED(status)) {
+                return WEXITSTATUS(status);
+            } else {
+                return -1;
+            }
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
 }
 

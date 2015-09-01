@@ -72,6 +72,7 @@ TEST(Ccommand, RunOk)
 {
     const char *program_true = "/bin/true";
     const char *program_false = "/bin/false";
+    const char *program_unexistent = "/bin/some_not_existing_program";
 
     ccommand_init(&cmd, program_true);
     CHECK_EQUAL(0, ccommand_exec(&cmd));
@@ -79,4 +80,8 @@ TEST(Ccommand, RunOk)
 
     ccommand_init(&cmd, program_false);
     CHECK_EQUAL(1, ccommand_exec(&cmd));
+    ccommand_cleanup(&cmd);
+
+    ccommand_init(&cmd, program_unexistent);
+    CHECK_EQUAL(-1, ccommand_exec(&cmd));
 }
