@@ -18,6 +18,7 @@ int ccommand_init(struct ccommand *cmd, const char *program)
     if (!cmd || !program)
         return -1;
 
+    cmd->args = NULL;
     cmd->nargs = 0;
     ccommand_add_arg_private(cmd, program);
     return 0;
