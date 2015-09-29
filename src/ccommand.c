@@ -48,13 +48,16 @@ int ccommand_add_arg(struct ccommand *cmd, const char *fmt, ...)
 
     char *arg_str;
     va_list argp;
+    int ret;
 
     va_start(argp, fmt);
-    if (vasprintf(&arg_str, fmt, argp) < 0)
-        return -1;
+    ret = vasprintf(&arg_str, fmt, argp);
     va_end(argp);
+    
+    if (ret == -1)
+        return -1;
 
-    int ret = ccommand_add_arg_private(cmd, arg_str);
+    ret = ccommand_add_arg_private(cmd, arg_str);
 
     free(arg_str);
     return ret;
