@@ -11,16 +11,6 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
-static inline void *xmalloc(const size_t size)
-{
-    void *p = malloc(size);
-    if (!p && size) {
-        fprintf(stderr, "cannot allocate %zu bytes\n", size);
-		exit(EXIT_FAILURE);
-    }
-    return p;
-}
-
 static inline void *xrealloc(void *pold, const size_t size)
 {
     void *p = realloc(pold, size);
@@ -54,16 +44,6 @@ static inline int vxasprintf(char **strp, const char *fmt, va_list argp)
         fprintf(stderr, "cannot allocate a string\n");
         exit(EXIT_FAILURE);
     }
-    return ret;
-}
-
-static inline int xasprintf(char **strp, const char *fmt, ...)
-{
-    int ret;
-    va_list args;
-    va_start(args, fmt);
-    ret = vxasprintf(strp, fmt, args);
-    va_end(args);
     return ret;
 }
 
