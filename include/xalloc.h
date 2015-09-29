@@ -11,16 +11,6 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
-static inline void *xrealloc(void *pold, const size_t size)
-{
-    void *p = realloc(pold, size);
-    if (!p && size) {
-        fprintf(stderr, "cannot allocate %zu bytes\n", size);
-		exit(EXIT_FAILURE);
-    }
-    return p;
-}
-
 static inline char *xstrdup(const char *str)
 {
     char *ret;

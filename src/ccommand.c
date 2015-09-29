@@ -6,11 +6,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-static void ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
+static int ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
 {
     size_t new_size = (cmd->nargs + 1) * sizeof(char*);
-    cmd->args = xrealloc((char**)cmd->args, new_size);
+    const char **new_args = realloc((char**)cmd->args, new_size);
+    if (new_args == NULL)
+        return -1;
+    cmd->args = new_args;
     cmd->args[cmd->nargs++] = xstrdup(arg);
+    return 0;
 }
 
 int ccommand_init(struct ccommand *cmd, const char *program)
@@ -20,8 +24,7 @@ int ccommand_init(struct ccommand *cmd, const char *program)
 
     cmd->args = NULL;
     cmd->nargs = 0;
-    ccommand_add_arg_private(cmd, program);
-    return 0;
+    return ccommand_add_arg_private(cmd, program);
 }
 
 int ccommand_add_arg(struct ccommand *cmd, const char *fmt, ...)
@@ -36,10 +39,10 @@ int ccommand_add_arg(struct ccommand *cmd, const char *fmt, ...)
     vxasprintf(&arg_str, fmt, argp);
     va_end(argp);
 
-    ccommand_add_arg_private(cmd, arg_str);
+    int ret = ccommand_add_arg_private(cmd, arg_str);
 
     free(arg_str);
-    return 0;
+    return ret;
 }
 
 int ccommand_exec(struct ccommand *cmd)
@@ -47,7 +50,8 @@ int ccommand_exec(struct ccommand *cmd)
     if (!cmd || !cmd->args || cmd->nargs == 0)
         return -1;
 
-    ccommand_add_arg_private(cmd, NULL);
+    if (ccommand_add_arg_private(cmd, NULL) < 0)
+        return -1;
 
     int status;
     pid_t child_pid;
