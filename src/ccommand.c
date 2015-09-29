@@ -1,10 +1,20 @@
 #include <ccommand.h>
-#include <xalloc.h>
 
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+static inline char *xstrdup(const char *str)
+{
+    if (!str)
+        return NULL;
+
+    return strdup(str);
+}
 
 static int ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
 {
@@ -40,7 +50,8 @@ int ccommand_add_arg(struct ccommand *cmd, const char *fmt, ...)
     va_list argp;
 
     va_start(argp, fmt);
-    vxasprintf(&arg_str, fmt, argp);
+    if (vasprintf(&arg_str, fmt, argp) < 0)
+        return -1;
     va_end(argp);
 
     int ret = ccommand_add_arg_private(cmd, arg_str);
