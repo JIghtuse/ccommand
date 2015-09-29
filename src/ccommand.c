@@ -13,7 +13,11 @@ static int ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
     if (new_args == NULL)
         return -1;
     cmd->args = new_args;
-    cmd->args[cmd->nargs++] = xstrdup(arg);
+
+    int idx = cmd->nargs++;
+    cmd->args[idx] = xstrdup(arg);
+    if (arg && !cmd->args[idx])
+        return -1;
     return 0;
 }
 

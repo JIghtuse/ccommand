@@ -13,17 +13,10 @@ extern "C" {
 
 static inline char *xstrdup(const char *str)
 {
-    char *ret;
     if (!str)
         return NULL;
 
-    ret = strdup(str);
-    if (!ret) {
-        fprintf(stderr, "cannot duplicate strig\n");
-		exit(EXIT_FAILURE);
-    }
-
-    return ret;
+    return strdup(str);
 }
 
 static inline int vxasprintf(char **strp, const char *fmt, va_list argp)
