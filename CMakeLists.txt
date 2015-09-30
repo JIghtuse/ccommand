@@ -12,3 +12,8 @@ add_library(ccommand SHARED
     src/ccommand.c)
 
 add_subdirectory(tests)
+
+add_executable(ping
+    examples/ping.c)
+
+target_link_libraries(ping ccommand)
