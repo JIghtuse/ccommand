@@ -8,6 +8,11 @@ C library to launch external commands
     mkdir build && cd build
     cmake .. && make
 
+### Examples
+
+Examples can be found in examples/ directory. You can found build instructions
+in following section and in root CMakeLists.txt file.
+
 ### Usage
 
 Following example can be saved to file ping.c and then built and run like this:
