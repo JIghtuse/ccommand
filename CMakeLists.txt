@@ -13,7 +13,7 @@ add_library(ccommand SHARED
     include/ccommand.h
     src/ccommand.c)
 
-add_subdirectory(tests)
+# add_subdirectory(tests)
 
 add_executable(ping
     examples/ping.c)
