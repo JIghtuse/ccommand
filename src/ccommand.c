@@ -16,11 +16,8 @@ static inline char *xstrdup(const char *str)
     return strdup(str);
 }
 
-static int ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
+static int increase_capacity(struct ccommand *cmd)
 {
-    if (cmd->capacity > cmd->nargs) {
-        goto add_arg;
-    }
     size_t new_capacity = cmd->capacity ? cmd->capacity * 2 : 1;
     size_t new_size = new_capacity * sizeof(char*);
     const char **new_args = realloc((char**)cmd->args, new_size);
@@ -28,10 +25,15 @@ static int ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
         return -1;
     cmd->args = new_args;
     cmd->capacity = new_capacity;
+    return 0;
+}
 
-    int idx;
-add_arg:
-    idx = cmd->nargs++;
+static int ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
+{
+    if (cmd->capacity <= cmd->nargs && increase_capacity(cmd) < 0) {
+        return -1;
+    }
+    int idx = cmd->nargs++;
     cmd->args[idx] = xstrdup(arg);
     if (arg && !cmd->args[idx])
         return -1;
