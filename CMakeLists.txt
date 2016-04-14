@@ -13,8 +13,6 @@ add_library(ccommand SHARED
     include/ccommand.h
     src/ccommand.c)
 
-# add_subdirectory(tests)
-
 add_executable(ping
     examples/ping.c)
 
@@ -24,3 +22,7 @@ add_executable(sh
     examples/sh.cxx)
 
 target_link_libraries(sh ccommand)
+
+if (BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
