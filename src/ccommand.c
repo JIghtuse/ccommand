@@ -18,13 +18,20 @@ static inline char *xstrdup(const char *str)
 
 static int ccommand_add_arg_private(struct ccommand *cmd, const char *arg)
 {
-    size_t new_size = (cmd->nargs + 1) * sizeof(char*);
+    if (cmd->capacity > cmd->nargs) {
+        goto add_arg;
+    }
+    size_t new_capacity = cmd->capacity ? cmd->capacity * 2 : 1;
+    size_t new_size = new_capacity * sizeof(char*);
     const char **new_args = realloc((char**)cmd->args, new_size);
     if (new_args == NULL)
         return -1;
     cmd->args = new_args;
+    cmd->capacity = new_capacity;
 
-    int idx = cmd->nargs++;
+    int idx;
+add_arg:
+    idx = cmd->nargs++;
     cmd->args[idx] = xstrdup(arg);
     if (arg && !cmd->args[idx])
         return -1;
@@ -38,6 +45,7 @@ int ccommand_init(struct ccommand *cmd, const char *program)
 
     cmd->args = NULL;
     cmd->nargs = 0;
+    cmd->capacity = 0;
     return ccommand_add_arg_private(cmd, program);
 }
 
@@ -104,5 +112,6 @@ int ccommand_cleanup(struct ccommand *cmd)
     free(cmd->args);
     cmd->args = NULL;
     cmd->nargs = 0;
+    cmd->capacity = 0;
     return 0;
 }

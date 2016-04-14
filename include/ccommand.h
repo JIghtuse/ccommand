@@ -10,6 +10,7 @@ extern "C" {
 struct ccommand {
     const char **args;
     size_t nargs;
+    size_t capacity;
 };
 
 int ccommand_init(struct ccommand *cmd, const char* program);

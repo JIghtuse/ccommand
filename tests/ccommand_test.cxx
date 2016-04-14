@@ -85,3 +85,28 @@ TEST(Ccommand, RunOk)
     ccommand_init(&cmd, program_unexistent);
     CHECK_EQUAL(-1, ccommand_exec(&cmd));
 }
+
+TEST(Ccommand, CapacityWorks)
+{
+    const char *program_true = "/bin/true";
+
+    ccommand_init(&cmd, program_true);
+    CHECK_EQUAL(1, cmd.capacity);
+    ccommand_add_arg(&cmd, "a");
+    CHECK_EQUAL(2, cmd.capacity);
+    ccommand_add_arg(&cmd, "b");
+    CHECK_EQUAL(4, cmd.capacity);
+    ccommand_add_arg(&cmd, "c");
+    CHECK_EQUAL(4, cmd.capacity);
+    ccommand_add_arg(&cmd, "d");
+    CHECK_EQUAL(8, cmd.capacity);
+    ccommand_add_arg(&cmd, "f");
+    CHECK_EQUAL(8, cmd.capacity);
+    ccommand_cleanup(&cmd);
+    CHECK_EQUAL(0, cmd.capacity);
+
+    ccommand_init(&cmd, program_true);
+    CHECK_EQUAL(1, cmd.capacity);
+    ccommand_cleanup(&cmd);
+    CHECK_EQUAL(0, cmd.capacity);
+}
