@@ -26,3 +26,8 @@ target_link_libraries(sh ccommand)
 if (BUILD_TESTS)
     add_subdirectory(tests)
 endif()
+
+install(TARGETS ccommand
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin)
